@@ -128,7 +128,19 @@ end
 function dumpItemInfo()
     data_collection = {}
     for _, item in pairs(prototypes.item) do
-        data_collection[item.name] = item.stack_size
+        invalid = false
+        if item.hidden then
+            invalid = true
+        end
+        if item.flags and (item.flags["spawnable"] or item.flags["only-in-cursor"]) then
+            invalid = true
+        end
+        if item.parameter then
+            invalid = true
+        end
+        if not invalid then
+            data_collection[item.name] = item.stack_size
+        end
     end
 
     helpers.write_file("items.json", helpers.table_to_json(data_collection), false)
