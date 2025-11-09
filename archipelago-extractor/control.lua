@@ -34,7 +34,7 @@ end
 function dumpRecipeInfo(force)
     data_collection = {}
     for recipe_name, recipe in pairs(force.recipes) do
-        if recipe.enabled then
+        if recipe.enabled and not recipe.prototype.parameter then
             local recipe_data = {}
             recipe_data["ingredients"] = {}
             recipe_data["products"] = {}
