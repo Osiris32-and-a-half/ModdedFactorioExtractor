@@ -44,7 +44,19 @@ function dumpRecipeInfo(force)
                 recipe_data["ingredients"][ingredient.name] = ingredient.amount
             end
             for _, product in pairs(recipe.products) do
-                recipe_data["products"][product.name] = product.amount
+                if product.amount then
+                    if product.probability then
+                        recipe_data["products"][product.name] = product.probability * product.amount
+                    else
+                        recipe_data["products"][product.name] = product.amount
+                    end
+                else
+                    if product.probability then
+                        recipe_data["products"][product.name] = product.probability * (product.amount_min + product.amount_max) / 2
+                    else
+                        recipe_data["products"][product.name] = (product.amount_min + product.amount_max) / 2
+                    end
+                end
             end
             data_collection[recipe_name] = recipe_data
         end
