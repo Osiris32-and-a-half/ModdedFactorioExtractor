@@ -169,6 +169,27 @@ function dumpFluidInfo()
     game.print("Exported Fluid Data")
 end
 
+function dumpModSettings()
+    data_collection = {}
+    -- add all mods regardless of settings
+    for mod, version in pairs(script.active_mods) do
+        if mod ~= "archipelago-extractor" and mod ~= "base" then
+            data_collection[mod] = {}
+        end
+    end
+
+    for setting_name, setting_proto in pairs(prototypes.mod_setting) do
+        if setting_proto.setting_type == "startup" then
+            data_collection[setting_proto.mod][setting_name] = {}
+            data_collection[setting_proto.mod][setting_name]["type"] = setting_proto.type
+            data_collection[setting_proto.mod][setting_name]["value"] = settings.startup[setting_name].value
+        end
+    end
+
+    helpers.write_file("modSettings.json", helpers.table_to_json(data_collection), false)
+    game.print("Exported Mod settings")
+end
+
 function dumpGameInfo()
     -- dump Game Information that the Archipelago Randomizer needs.
     local force = game.forces["player"]
@@ -178,6 +199,7 @@ function dumpGameInfo()
     dumpMachineInfo()
     dumpItemInfo()
     dumpFluidInfo()
+    dumpModSettings()
 end
 
 commands.add_command("ap-get-info-dump", "Dump Game Info, used by Archipelago.", function(call)
