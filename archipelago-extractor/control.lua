@@ -190,6 +190,22 @@ function dumpModSettings()
     game.print("Exported Mod settings")
 end
 
+function dumpAutoplace()
+    data_collection = {}
+
+    for name, autoplace in pairs(prototypes.autoplace_control) do
+        if autoplace.hidden == false then
+            data_collection[name] = {}
+            data_collection[name]["richness"] = autoplace.richness
+            data_collection[name]["can_be_disabled"] = autoplace.can_be_disabled
+            data_collection[name]["category"] = autoplace.category
+        end
+    end
+    
+    helpers.write_file("autoplace.json", helpers.table_to_json(data_collection), false)
+    game.print("Exported autoplace")
+end
+
 function dumpGameInfo()
     -- dump Game Information that the Archipelago Randomizer needs.
     local force = game.forces["player"]
@@ -200,6 +216,7 @@ function dumpGameInfo()
     dumpItemInfo()
     dumpFluidInfo()
     dumpModSettings()
+    dumpAutoplace()
 end
 
 commands.add_command("ap-get-info-dump", "Dump Game Info, used by Archipelago.", function(call)
