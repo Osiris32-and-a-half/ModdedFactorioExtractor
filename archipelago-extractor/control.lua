@@ -128,7 +128,7 @@ end
 function dumpMachineInfo()
     data_collection = {}
     for _, proto in pairs(prototypes.entity) do
-        if proto.crafting_categories then
+        if proto.crafting_categories and not proto.hidden then
             data_collection[proto.name] = proto.crafting_categories
         end
     end
