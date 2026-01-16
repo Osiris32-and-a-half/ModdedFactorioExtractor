@@ -65,27 +65,6 @@ function dumpRecipeInfo(force)
     game.print("Exported Recipe Data")
 end
 
-function dumpMachineInfo()
-    data_collection = {}
-    for _, proto in pairs(prototypes.entity) do
-        if proto.crafting_categories or proto.resource_categories then
-            data_collection[proto.name] = {}
-            if proto.crafting_categories then
-                data_collection[proto.name]["crafting"] = {}
-                data_collection[proto.name]["crafting"]["speed"] = proto.crafting_speed
-                data_collection[proto.name]["crafting"]["categories"] = proto.crafting_categories
-            end
-            if proto.resource_categories then
-                data_collection[proto.name]["mining"] = {}
-                data_collection[proto.name]["mining"]["categories"] = proto.resource_categories
-                data_collection[proto.name]["mining"]["speed"] = proto.mining_speed
-            end
-        end
-    end
-    helpers.write_file("machines.json", helpers.table_to_json(data_collection), false)
-    game.print("Exported Machine Data")
-end
-
 function dumpResourceInfo()
     data_collection = {}
     for _, proto in pairs(prototypes.autoplace_control) do
