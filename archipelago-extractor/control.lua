@@ -186,7 +186,7 @@ function dumpModSettings()
     data_collection = {}
     -- add all mods regardless of settings
     for mod, version in pairs(script.active_mods) do
-        if mod ~= "archipelago-extractor" and mod ~= "base" then
+        if mod ~= "archipelago-extractor" and mod ~= "base" and mod ~= "helmod" then
             data_collection[mod] = {}
         end
     end
