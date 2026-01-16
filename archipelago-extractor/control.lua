@@ -106,6 +106,7 @@ end
 
 function dumpMachineInfo()
     data_collection = {}
+    generators = {}
     for _, proto in pairs(prototypes.entity) do
         if proto.hidden then
             goto machineContinue
@@ -119,12 +120,17 @@ function dumpMachineInfo()
             goto machineContinue
         end
         if proto.type == "offshore-pump" then
-            data_collection[proto.name] = {["offshore-pump"]=true}
+            if proto.fluidbox_prototypes[1].filter then
+                generators[proto.name] = proto.fluidbox_prototypes[1].filter.name
+            else
+                data_collection[proto.name] = {["offshore-pump"]=true}
+            end
             goto machineContinue
         end
         ::machineContinue::
     end
 
+    helpers.write_file("generators.json", helpers.table_to_json(generators), false)
     helpers.write_file("machines.json", helpers.table_to_json(data_collection), false)
     game.print("Exported Machine Data")
 end
@@ -209,7 +215,7 @@ function dumpSpecialTiles()
             if data_collection[name] == nil then
                 data_collection[name] = {}
             end
-            data_collection[name]["fluid"] = tile.fluid.object_name
+            data_collection[name]["fluid"] = tile.fluid.name
         end
         ::tileContinue::
     end
