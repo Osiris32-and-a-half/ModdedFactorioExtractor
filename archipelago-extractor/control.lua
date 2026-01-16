@@ -128,9 +128,22 @@ end
 function dumpMachineInfo()
     data_collection = {}
     for _, proto in pairs(prototypes.entity) do
-        if proto.crafting_categories and not proto.hidden then
-            data_collection[proto.name] = proto.crafting_categories
+        if proto.hidden then
+            goto machineContinue
         end
+        if proto.crafting_categories then
+            data_collection[proto.name] = proto.crafting_categories
+            goto machineContinue
+        end
+        if proto.type == "mining-drill" then
+            data_collection[proto.name] = proto.resource_categories
+            goto machineContinue
+        end
+        if proto.type == "offshore-pump" then
+            data_collection[proto.name] = {["offshore-pump"]=true}
+            goto machineContinue
+        end
+        ::machineContinue::
     end
 
     helpers.write_file("machines.json", helpers.table_to_json(data_collection), false)
