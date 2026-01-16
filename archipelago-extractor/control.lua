@@ -219,6 +219,26 @@ function dumpAutoplace()
     game.print("Exported autoplace")
 end
 
+function dumpSpecialTiles()
+    data_collection = {}
+    -- todo this needs to be split by planet for SA
+    for name, tile in pairs(prototypes.tile) do
+        tileData = {}
+        if tile.hidden then
+            goto tileContinue
+        end
+        if tile.fluid then
+            tileData["fluid"] = tile.fluid.object_name
+        end
+        ::tileContinue::
+        if tileData ~= {} then
+            data_collection[name] = tileData
+        end
+    end
+    helpers.write_file("specialTiles.json", helpers.table_to_json(data_collection), false)
+    game.print("Exported autoplace")
+end
+
 function dumpGameInfo()
     -- dump Game Information that the Archipelago Randomizer needs.
     local force = game.forces["player"]
@@ -230,6 +250,7 @@ function dumpGameInfo()
     dumpFluidInfo()
     dumpModSettings()
     dumpAutoplace()
+    dumpSpecialTiles()
 end
 
 commands.add_command("ap-get-info-dump", "Dump Game Info, used by Archipelago.", function(call)
