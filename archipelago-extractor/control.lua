@@ -236,7 +236,7 @@ function dumpSpecialTiles()
         end
     end
     helpers.write_file("specialTiles.json", helpers.table_to_json(data_collection), false)
-    game.print("Exported autoplace")
+    game.print("Exported specialTiles")
 end
 
 function dumpGameInfo()
