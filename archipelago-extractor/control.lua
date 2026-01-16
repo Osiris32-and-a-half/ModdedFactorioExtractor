@@ -223,17 +223,16 @@ function dumpSpecialTiles()
     data_collection = {}
     -- todo this needs to be split by planet for SA
     for name, tile in pairs(prototypes.tile) do
-        tileData = {}
         if tile.hidden then
             goto tileContinue
         end
         if tile.fluid then
-            tileData["fluid"] = tile.fluid.object_name
+            if data_collection[name] == nil then
+                data_collection[name] = {}
+            end
+            data_collection[name]["fluid"] = tile.fluid.object_name
         end
         ::tileContinue::
-        if tileData ~= {} then
-            data_collection[name] = tileData
-        end
     end
     helpers.write_file("specialTiles.json", helpers.table_to_json(data_collection), false)
     game.print("Exported specialTiles")
