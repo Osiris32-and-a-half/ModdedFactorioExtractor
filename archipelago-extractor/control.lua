@@ -44,18 +44,18 @@ function dumpRecipeInfo(force)
                 recipe_data["ingredients"][ingredient.name] = ingredient.amount
             end
             for _, product in pairs(recipe.products) do
+                if recipe_data["products"][product.name] == nil then
+                    recipe_data["products"][product.name] = 0
+                end
                 if product.amount then
-                    if product.probability then
-                        recipe_data["products"][product.name] = product.probability * product.amount
-                    else
-                        recipe_data["products"][product.name] = product.amount
-                    end
+                    amount = product.amount
                 else
-                    if product.probability then
-                        recipe_data["products"][product.name] = product.probability * (product.amount_min + product.amount_max) / 2
-                    else
-                        recipe_data["products"][product.name] = (product.amount_min + product.amount_max) / 2
-                    end
+                    amount = (product.amount_min + product.amount_max) / 2
+                end
+                if product.probability then
+                    recipe_data["products"][product.name] = recipe_data["products"][product.name] + (product.probability * amount)
+                else
+                    recipe_data["products"][product.name] = recipe_data["products"][product.name] + amount
                 end
             end
             data_collection[recipe_name] = recipe_data
@@ -83,19 +83,19 @@ function dumpResourceInfo()
             resource["fluid_amount"] = minable.fluid_amount
             resource["products"] = {}
             for _, product in pairs(minable.products) do
-                resource["products"][product.name] = {}
-                -- resource["products"][product.name]["type"] = product.type
-                resource["products"][product.name]["name"] = product.name
-                if product.amount then
-                    resource["products"][product.name]["amount"] = product.amount
-                else
-                    resource["products"][product.name]["amount"] = product.probability * (product.amount_min+product.amount_max)/2
+                if resource["products"][product.name] == nil then
+                    resource["products"][product.name] = 0
                 end
-                resource["products"][product.name]["catalyst_amount"] = product.catalyst_amount
-                -- hopefully don't need this
-                -- if product.type == "fluid" then
-                --     resource["products"][product.name]["temperature"] = product.temperature
-                -- end
+                if product.amount then
+                    amount = product.amount
+                else
+                    amount = (product.amount_min + product.amount_max) / 2
+                end
+                if product.probability then
+                    resource["products"][product.name] = resource["products"][product.name] + (product.probability * amount)
+                else
+                    resource["products"][product.name] = resource["products"][product.name] + amount
+                end
             end
             data_collection[proto.name] = resource
         end
@@ -137,22 +137,19 @@ end
 
 function dumpItemInfo()
     data_collection = {}
-    for _, item in pairs(prototypes.item) do
-        invalid = false
-        if item.hidden then
-            invalid = true
+    entity_to_item = {}
+    for name, item in pairs(prototypes.item) do
+        if item.hidden then goto itemContinue end
+        if item.flags and (item.flags["spawnable"] or item.flags["only-in-cursor"]) then goto itemContinue end
+        if item.parameter then goto itemContinue end
+        if item.place_result and item.place_result.name ~= name then
+            entity_to_item[item.place_result.name] = name
         end
-        if item.flags and (item.flags["spawnable"] or item.flags["only-in-cursor"]) then
-            invalid = true
-        end
-        if item.parameter then
-            invalid = true
-        end
-        if not invalid then
-            data_collection[item.name] = item.stack_size
-        end
+        data_collection[name] = item.stack_size
+        ::itemContinue::
     end
 
+    helpers.write_file("entityToItem.json", helpers.table_to_json(entity_to_item), false)
     helpers.write_file("items.json", helpers.table_to_json(data_collection), false)
     game.print("Exported Item Data")
 end
