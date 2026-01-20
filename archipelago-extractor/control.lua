@@ -157,7 +157,9 @@ end
 function dumpFluidInfo()
     data_collection = {}
     for _, item in pairs(prototypes.fluid) do
+        if item.parameter then goto fluidContinue end
         table.insert(data_collection, item.name)
+        ::fluidContinue::
     end
 
     helpers.write_file("fluids.json", helpers.table_to_json(data_collection), false)
