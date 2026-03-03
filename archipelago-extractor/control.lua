@@ -168,10 +168,21 @@ end
 
 function dumpModSettings()
     data_collection = {}
+    version_collection = {}
+    -- Mods that we don't need to save settings or specify an exact version for.
+    local default_excluded_mods = {
+        "archipelago-extractor" = true,
+        "base" = true,
+        "helmod" = true,
+        "creative-mod" = true,
+        "EditorExtensions" = true,
+        "RecipeBook" = true,
+    }
     -- add all mods regardless of settings
     for mod, version in pairs(script.active_mods) do
-        if mod ~= "archipelago-extractor" and mod ~= "base" and mod ~= "helmod" then
+        if not default_excluded_mods[mod] then
             data_collection[mod] = {}
+            version_collection[mod] = version
         end
     end
 
@@ -184,6 +195,7 @@ function dumpModSettings()
     end
 
     helpers.write_file("modSettings.json", helpers.table_to_json(data_collection), false)
+    helpers.write_file("modVersions.json", helpers.table_to_json(version_collection), false)
     game.print("Exported Mod settings")
 end
 
