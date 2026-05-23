@@ -31,6 +31,19 @@ function dumpTechInfo(force)
     game.print("Exported Tech Data")
 end
 
+function dumpLabInfo()
+    local data_collection = {}
+    for _, proto in pairs(prototypes.entity) do
+        if proto.hidden or proto.type ~= "lab" then
+            goto labContinue
+        end
+        data_collection[proto.name] = proto.lab_inputs
+        ::labContinue::
+    end
+    helpers.write_file("labs.json", helpers.table_to_json(data_collection), false)
+    game.print("Exported Lab Data")
+end
+
 function dumpRecipeInfo(force)
     data_collection = {}
     for recipe_name, recipe in pairs(force.recipes) do
@@ -171,12 +184,12 @@ function dumpModSettings()
     version_collection = {}
     -- Mods that we don't need to save settings or specify an exact version for.
     local default_excluded_mods = {
-        "archipelago-extractor" = true,
-        "base" = true,
-        "helmod" = true,
-        "creative-mod" = true,
-        "EditorExtensions" = true,
-        "RecipeBook" = true,
+        ["archipelago-extractor"] = true,
+        ["base"] = true,
+        ["helmod"] = true,
+        ["creative-mod"] = true,
+        ["EditorExtensions"] = true,
+        ["RecipeBook"] = true,
     }
     -- add all mods regardless of settings
     for mod, version in pairs(script.active_mods) do
@@ -238,6 +251,7 @@ function dumpGameInfo()
     -- dump Game Information that the Archipelago Randomizer needs.
     local force = game.forces["player"]
     dumpTechInfo(force)
+    dumpLabInfo()
     dumpRecipeInfo(force)
     dumpResourceInfo()
     dumpMachineInfo()
