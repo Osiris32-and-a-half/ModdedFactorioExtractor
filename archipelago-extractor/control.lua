@@ -180,6 +180,9 @@ function dumpModSettings()
     }
     -- add all mods regardless of settings
     for mod, version in pairs(script.active_mods) do
+        if string.match(str, "^AP%-W?%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%-P[1-9]%d-%-.+$") ~= nil then
+            error("Archipelago Extractor cannot run while an Archipelago session mod is loaded!")
+        end
         if not default_excluded_mods[mod] then
             data_collection[mod] = {}
             version_collection[mod] = version
