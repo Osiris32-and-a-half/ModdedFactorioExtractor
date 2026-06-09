@@ -67,9 +67,8 @@ end
 
 function dumpResourceInfo()
     data_collection = {}
-    for _, proto in pairs(prototypes.autoplace_control) do
-        if proto.category == "resource" then
-            local r_proto = prototypes.entity[proto.name]
+    for _, r_proto in pairs(prototypes.entity) do
+        if r_proto.type == "resource" then	
             local minable = r_proto.mineable_properties
             local resource = {}
             resource["minable"] = minable.minable
@@ -97,7 +96,9 @@ function dumpResourceInfo()
                     resource["products"][product.name] = resource["products"][product.name] + amount
                 end
             end
-            data_collection[proto.name] = resource
+            if r_proto.autoplace_specification then
+                data_collection[r_proto.autoplace_specification.control or r_proto.name] = resource
+            end
         end
     end
     helpers.write_file("resources.json", helpers.table_to_json(data_collection), false)
@@ -171,12 +172,12 @@ function dumpModSettings()
     version_collection = {}
     -- Mods that we don't need to save settings or specify an exact version for.
     local default_excluded_mods = {
-        "archipelago-extractor" = true,
-        "base" = true,
-        "helmod" = true,
-        "creative-mod" = true,
-        "EditorExtensions" = true,
-        "RecipeBook" = true,
+        ["archipelago-extractor"] = true,
+        ["base"] = true,
+        ["helmod"] = true,
+        ["creative-mod"] = true,
+        ["EditorExtensions"] = true,
+        ["RecipeBook"] = true,
     }
     -- add all mods regardless of settings
     for mod, version in pairs(script.active_mods) do
@@ -187,7 +188,7 @@ function dumpModSettings()
     end
 
     for setting_name, setting_proto in pairs(prototypes.mod_setting) do
-        if setting_proto.setting_type == "startup" then
+        if setting_proto.setting_type == "startup" and not default_excluded_mods[setting_proto.mod] then
             data_collection[setting_proto.mod][setting_name] = {}
             data_collection[setting_proto.mod][setting_name]["type"] = setting_proto.type
             data_collection[setting_proto.mod][setting_name]["value"] = settings.startup[setting_name].value
