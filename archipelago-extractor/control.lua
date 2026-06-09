@@ -171,12 +171,12 @@ function dumpModSettings()
     version_collection = {}
     -- Mods that we don't need to save settings or specify an exact version for.
     local default_excluded_mods = {
-        "archipelago-extractor" = true,
-        "base" = true,
-        "helmod" = true,
-        "creative-mod" = true,
-        "EditorExtensions" = true,
-        "RecipeBook" = true,
+        ["archipelago-extractor"] = true,
+        ["base"] = true,
+        ["helmod"] = true,
+        ["creative-mod"] = true,
+        ["EditorExtensions"] = true,
+        ["RecipeBook"] = true,
     }
     -- add all mods regardless of settings
     for mod, version in pairs(script.active_mods) do
@@ -187,7 +187,7 @@ function dumpModSettings()
     end
 
     for setting_name, setting_proto in pairs(prototypes.mod_setting) do
-        if setting_proto.setting_type == "startup" then
+        if setting_proto.setting_type == "startup" and not default_excluded_mods[setting_proto.mod] then
             data_collection[setting_proto.mod][setting_name] = {}
             data_collection[setting_proto.mod][setting_name]["type"] = setting_proto.type
             data_collection[setting_proto.mod][setting_name]["value"] = settings.startup[setting_name].value
