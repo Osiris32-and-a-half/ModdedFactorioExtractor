@@ -171,12 +171,13 @@ function dumpModSettings()
     version_collection = {}
     -- Mods that we don't need to save settings or specify an exact version for.
     local default_excluded_mods = {
-        "archipelago-extractor" = true,
-        "base" = true,
-        "helmod" = true,
-        "creative-mod" = true,
-        "EditorExtensions" = true,
-        "RecipeBook" = true,
+        ["archipelago-extractor"] = true,
+        ["modded-archipelago-extractor"] = true,
+        ["base"] = true,
+        ["helmod"] = true,
+        ["creative-mod"] = true,
+        ["EditorExtensions"] = true,
+        ["RecipeBook"] = true,
     }
     -- add all mods regardless of settings
     for mod, version in pairs(script.active_mods) do
