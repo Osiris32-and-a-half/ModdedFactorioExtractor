@@ -240,6 +240,7 @@ end
 
 function dumpGameInfo()
     -- dump Game Information that the Archipelago Randomizer needs.
+    dumpModSettings()
     local force = game.forces["player"]
     dumpTechInfo(force)
     dumpRecipeInfo(force)
@@ -247,7 +248,6 @@ function dumpGameInfo()
     dumpMachineInfo()
     dumpItemInfo()
     dumpFluidInfo()
-    dumpModSettings()
     dumpAutoplace()
     dumpSpecialTiles()
 end
