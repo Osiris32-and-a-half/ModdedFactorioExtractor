@@ -172,6 +172,7 @@ function dumpModSettings()
     -- Mods that we don't need to save settings or specify an exact version for.
     local default_excluded_mods = {
         ["archipelago-extractor"] = true,
+        ["modded-archipelago-extractor"] = true,
         ["base"] = true,
         ["helmod"] = true,
         ["creative-mod"] = true,
