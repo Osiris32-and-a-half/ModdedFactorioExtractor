@@ -188,7 +188,7 @@ function dumpModSettings()
     end
 
     for setting_name, setting_proto in pairs(prototypes.mod_setting) do
-        if setting_proto.setting_type == "startup" then
+        if setting_proto.setting_type == "startup" and not default_excluded_mods[setting_proto.mod] then
             data_collection[setting_proto.mod][setting_name] = {}
             data_collection[setting_proto.mod][setting_name]["type"] = setting_proto.type
             data_collection[setting_proto.mod][setting_name]["value"] = settings.startup[setting_name].value
