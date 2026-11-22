@@ -20,6 +20,7 @@ from typing import Deque, Optional, Tuple
 
 ROOT: Path = Path(__file__).resolve().parents[1]
 MOD_SOURCE: Path = ROOT / "archipelago-extractor"
+SPACE_AGE_DISABLED_MOD_LIST: Path = ROOT / "scripts" / "mod-list.json"
 MOD_NAME = "modded-archipelago-extractor"
 OLD_MOD_NAME = "archipelago-extractor"
 
@@ -55,6 +56,7 @@ def stage_mods(
     staging_directory: Path,
     source_mod: Path,
     installed_mods: Optional[Path],
+    disable_space_age: bool,
 ) -> None:
     staging_directory.mkdir()
     if installed_mods is not None:
@@ -72,21 +74,9 @@ def stage_mods(
                 else:
                     shutil.copy2(entry, destination)
 
-        mod_list = staging_directory / "mod-list.json"
-        if mod_list.exists():
-            config = json.loads(mod_list.read_text(encoding="utf-8"))
-            mods = config.get("mods")
-            if not isinstance(mods, list):
-                raise ValueError(f"Invalid mod list format: {mod_list}")
-            mods[:] = [mod for mod in mods if mod.get("name") != OLD_MOD_NAME]
-            extractor_entry = next(
-                (mod for mod in mods if mod.get("name") == MOD_NAME), None
-            )
-            if extractor_entry is None:
-                mods.append({"name": MOD_NAME, "enabled": True})
-            else:
-                extractor_entry["enabled"] = True
-            mod_list.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+    mod_list = staging_directory / "mod-list.json"
+    if not mod_list.exists() and disable_space_age:
+        shutil.copy2(SPACE_AGE_DISABLED_MOD_LIST, mod_list)
 
     extractor_path = staging_directory / MOD_NAME
     try:
@@ -131,13 +121,14 @@ def run_dump(
     config_file: Optional[Path],
     save: Optional[Path],
     timeout: int,
+    disable_space_age: bool,
 ) -> None:
     log_tail = deque(maxlen=200)
     log_lock = threading.Lock()
     with tempfile.TemporaryDirectory(prefix="factorio-info-dump-") as temp_dir:
         temp_path = Path(temp_dir)
         mods_path = temp_path / "mods"
-        stage_mods(mods_path, MOD_SOURCE, installed_mods)
+        stage_mods(mods_path, MOD_SOURCE, installed_mods, disable_space_age)
         save_path = save or (temp_path / "extractor-test.zip")
 
         common_args = [str(factorio), "--disable-audio", "--mod-directory", str(mods_path)]
@@ -248,6 +239,11 @@ def parse_args() -> argparse.Namespace:
         help="Optional existing save file; otherwise a temporary fresh map is created.",
     )
     parser.add_argument(
+        "--disable-space-age",
+        action="store_true",
+        help="Use the bundled expansion-disabled mod list if no mod list exists.",
+    )
+    parser.add_argument(
         "--timeout",
         type=int,
         default=120,
@@ -273,7 +269,14 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
-        run_dump(args.factorio, args.mods, args.config, args.save, args.timeout)
+        run_dump(
+            args.factorio,
+            args.mods,
+            args.config,
+            args.save,
+            args.timeout,
+            args.disable_space_age,
+        )
     except (OSError, RuntimeError, TimeoutError, ValueError, subprocess.CalledProcessError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1

@@ -42,6 +42,3 @@ luac.out
 
 .env
 .vscode/
-
-mod-settings.dat
-mod-list.json

@@ -28,3 +28,14 @@ python3 scripts/run-info-dump.py \
 The Factorio config can be selected with `--config`. The exported JSON files
 are written to the `script-output` directory under Factorio's configured
 write-data path.
+
+If no `mod-list.json` exists and `--disable-space-age` is set,
+the runner uses the bundled [mod-list.json](scripts/mod-list.json) with Space
+Age and its related expansions disabled. An existing mod list takes
+precedence and is left unchanged:
+
+```sh
+python3 scripts/run-info-dump.py \
+  --factorio /path/to/factorio \
+  --disable-space-age
+```
