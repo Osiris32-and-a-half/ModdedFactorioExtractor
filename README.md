@@ -39,3 +39,24 @@ python3 scripts/run-info-dump.py \
   --factorio /path/to/factorio \
   --disable-space-age
 ```
+
+## Build mod archives
+
+Build both Factorio targets into `./build`:
+
+```sh
+python3 scripts/build.py
+```
+
+Pass one or more targets to build only those archives:
+
+```sh
+python3 scripts/build.py 2.0
+python3 scripts/build.py 2.0 2.1
+```
+
+The ZIPs use Factorio-compatible names, with target-specific mod versions
+derived from the source patch version. For example, source version `2.1.1`
+produces `modded-archipelago-extractor_2.0.1.zip` and
+`modded-archipelago-extractor_2.1.1.zip`. Each archive contains the matching
+`factorio_version`; the source `info.json` is not modified.
