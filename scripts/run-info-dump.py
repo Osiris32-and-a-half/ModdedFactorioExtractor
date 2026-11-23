@@ -4,6 +4,7 @@
 import argparse
 import json
 import os
+import re
 import secrets
 import shutil
 import socket
@@ -17,12 +18,15 @@ from collections import deque
 from pathlib import Path
 from typing import Deque, Optional, Tuple
 
+import build as mod_build
+
 
 ROOT: Path = Path(__file__).resolve().parents[1]
-MOD_SOURCE: Path = ROOT / "archipelago-extractor"
 SPACE_AGE_DISABLED_MOD_LIST: Path = ROOT / "scripts" / "mod-list.json"
 MOD_NAME = "modded-archipelago-extractor"
 OLD_MOD_NAME = "archipelago-extractor"
+SUPPORTED_FACTORIO_TARGETS = ("2.0", "2.1")
+FACTORIO_VERSION_PATTERN = re.compile(r"Version:\s*(\d+\.\d+)\.\d+")
 
 
 def send_packet(
@@ -52,9 +56,34 @@ def receive_packet(connection: socket.socket) -> Tuple[int, int, str]:
     return request_id, packet_type, body
 
 
+def detect_factorio_target(factorio: Path) -> str:
+    result = subprocess.run(
+        [str(factorio), "--version"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    version_output = result.stdout + result.stderr
+    version_match = FACTORIO_VERSION_PATTERN.search(version_output)
+    if version_match is None:
+        raise ValueError(f"Could not determine Factorio version:\n{version_output}")
+
+    target = version_match.group(1)
+    if target not in SUPPORTED_FACTORIO_TARGETS:
+        supported = ", ".join(SUPPORTED_FACTORIO_TARGETS)
+        raise ValueError(
+            f"Unsupported Factorio version {target}; supported versions: {supported}"
+        )
+    return target
+
+
+def build_mod_archive(target: str, output_directory: Path) -> Path:
+    return mod_build.build_target(target, output_directory)
+
+
 def stage_mods(
     staging_directory: Path,
-    source_mod: Path,
+    mod_archive: Path,
     installed_mods: Optional[Path],
     disable_space_age: bool,
 ) -> None:
@@ -78,11 +107,7 @@ def stage_mods(
     if not mod_list.exists() and disable_space_age:
         shutil.copy2(SPACE_AGE_DISABLED_MOD_LIST, mod_list)
 
-    extractor_path = staging_directory / MOD_NAME
-    try:
-        extractor_path.symlink_to(source_mod, target_is_directory=True)
-    except OSError:
-        shutil.copytree(source_mod, extractor_path)
+    shutil.copy2(mod_archive, staging_directory / mod_archive.name)
 
 
 def wait_for_rcon(
@@ -123,12 +148,14 @@ def run_dump(
     timeout: int,
     disable_space_age: bool,
 ) -> None:
+    factorio_target = detect_factorio_target(factorio)
     log_tail = deque(maxlen=200)
     log_lock = threading.Lock()
     with tempfile.TemporaryDirectory(prefix="factorio-info-dump-") as temp_dir:
         temp_path = Path(temp_dir)
         mods_path = temp_path / "mods"
-        stage_mods(mods_path, MOD_SOURCE, installed_mods, disable_space_age)
+        mod_archive = build_mod_archive(factorio_target, temp_path / "build")
+        stage_mods(mods_path, mod_archive, installed_mods, disable_space_age)
         save_path = save or (temp_path / "extractor-test.zip")
 
         common_args = [str(factorio), "--disable-audio", "--mod-directory", str(mods_path)]

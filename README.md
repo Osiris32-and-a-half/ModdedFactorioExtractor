@@ -14,6 +14,10 @@ an existing save), and runs `/ap-get-info-dump` over RCON:
 python3 scripts/run-info-dump.py --factorio /path/to/factorio
 ```
 
+The runner detects the executable's Factorio version and uses `scripts/build.py`
+to stage the matching 2.0 or 2.1 mod archive. It reports an error for unsupported
+Factorio versions.
+
 To load an installed modpack, pass its Factorio `mods` directory. The script
 temporarily stages that mod directory and enables this extractor without
 changing the installed files:
