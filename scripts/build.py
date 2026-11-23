@@ -42,11 +42,13 @@ def build_target(target: str, output_directory: Path) -> Path:
     with zipfile.ZipFile(
         archive_path, mode="w", compression=zipfile.ZIP_DEFLATED
     ) as archive:
+        mod_folder = f"{name}_{mod_version}"
         for source_path in sorted(MOD_DIRECTORY.rglob("*")):
             if not source_path.is_file():
                 continue
-            archive_name = source_path.relative_to(MOD_DIRECTORY).as_posix()
-            if archive_name == "info.json":
+            relative_name = source_path.relative_to(MOD_DIRECTORY).as_posix()
+            archive_name = f"{mod_folder}/{relative_name}"
+            if relative_name == "info.json":
                 archive.writestr(
                     archive_name,
                     json.dumps(info, indent=4) + "\n",

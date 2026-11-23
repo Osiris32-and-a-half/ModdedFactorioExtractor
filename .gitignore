@@ -40,6 +40,8 @@ luac.out
 *.hex
 *.bat
 
+*.pyc
+
 .env
 .vscode/
 

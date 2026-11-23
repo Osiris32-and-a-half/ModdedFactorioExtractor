@@ -70,4 +70,5 @@ The ZIPs use Factorio-compatible names, with target-specific mod versions
 derived from the source patch version. For example, source version `2.1.1`
 produces `modded-archipelago-extractor_2.0.1.zip` and
 `modded-archipelago-extractor_2.1.1.zip`. Each archive contains the matching
-`factorio_version`; the source `info.json` is not modified.
+`factorio_version` and places the mod files inside a versioned top-level folder,
+as required by Factorio. The source `info.json` is not modified.

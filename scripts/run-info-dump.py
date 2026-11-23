@@ -74,6 +74,7 @@ def detect_factorio_target(factorio: Path) -> str:
         raise ValueError(
             f"Unsupported Factorio version {target}; supported versions: {supported}"
         )
+    print(f"Detected factorio version: {target}")
     return target
 
 
@@ -224,8 +225,10 @@ def run_dump(
             time.sleep(0.5)
             with log_lock:
                 recent_log = "".join(log_tail)
-            if 'Error while running command "ap-get-info-dump"' in recent_log:
+            if 'Error while running command "ap-get-info-dump"' in response:
                 raise RuntimeError("Factorio reported an error while running the dump")
+            elif 'Unknown command "ap-get-info-dump". Type /h or /help for more help about commands.' in response:
+                raise RuntimeError("Factorio does not recognize the /ap-get-info-dump command; is the mod loaded?")
             print("Dump command completed.")
         finally:
             if connection is not None:
