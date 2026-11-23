@@ -55,6 +55,13 @@ python3 scripts/build.py 2.0
 python3 scripts/build.py 2.0 2.1
 ```
 
+Use `--output-dir` (or `-o`) to place archives in a different directory:
+
+```sh
+python3 scripts/build.py --output-dir /path/to/artifacts
+python3 scripts/build.py 2.0 --output-dir ./dist
+```
+
 The ZIPs use Factorio-compatible names, with target-specific mod versions
 derived from the source patch version. For example, source version `2.1.1`
 produces `modded-archipelago-extractor_2.0.1.zip` and
