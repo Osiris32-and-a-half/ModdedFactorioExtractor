@@ -33,16 +33,20 @@ end
 
 function dumpRecipeInfo(force)
     data_collection = {}
+    local uses_recipe_categories = string.match(script.active_mods["base"], "^2%.1") ~= nil
     for recipe_name, recipe in pairs(force.recipes) do
         if recipe.enabled and not recipe.prototype.parameter then
             local recipe_data = {}
+            recipe_data["energy"] = recipe.energy
+            recipe_data["categories"] = recipe.categories or {recipe.category}
+
             recipe_data["ingredients"] = {}
             recipe_data["products"] = {}
-            recipe_data["categories"] = recipe.categories
-            recipe_data["energy"] = recipe.energy
+
             for _, ingredient in pairs(recipe.ingredients) do
                 recipe_data["ingredients"][ingredient.name] = ingredient.amount
             end
+
             for _, product in pairs(recipe.products) do
                 if recipe_data["products"][product.name] == nil then
                     recipe_data["products"][product.name] = 0
@@ -58,6 +62,7 @@ function dumpRecipeInfo(force)
                     recipe_data["products"][product.name] = recipe_data["products"][product.name] + amount
                 end
             end
+
             data_collection[recipe_name] = recipe_data
         end
     end
