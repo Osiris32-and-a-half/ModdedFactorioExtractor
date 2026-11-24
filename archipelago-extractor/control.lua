@@ -208,6 +208,21 @@ function dumpModSettings()
     game.print("Exported Mod settings")
 end
 
+function dumpExtractorInfo()
+    local mod_version = script.active_mods["modded-archipelago-extractor"]
+    local extraction_version = string.match(mod_version, "^%d+%.%d+%.(%d+)$")
+    if extraction_version == nil then
+        error("Unable to determine extraction version from mod version: " .. mod_version)
+    end
+
+    local data = {
+        ["factorio_version"] = script.active_mods["base"],
+        ["extraction_version"] = tonumber(extraction_version),
+    }
+    helpers.write_file("extractorInfo.json", helpers.table_to_json(data), false)
+    game.print("Exported Extractor Info")
+end
+
 function dumpAutoplace()
     data_collection = {}
 
@@ -246,6 +261,7 @@ end
 function dumpGameInfo()
     -- dump Game Information that the Archipelago Randomizer needs.
     dumpModSettings()
+    dumpExtractorInfo()
     local force = game.forces["player"]
     dumpTechInfo(force)
     dumpRecipeInfo(force)

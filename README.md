@@ -33,6 +33,11 @@ The Factorio config can be selected with `--config`. The exported JSON files
 are written to the `script-output` directory under Factorio's configured
 write-data path.
 
+The dump includes `extractorInfo.json` with the full Factorio base version and
+an `extraction_version` taken from the patch component of the extractor mod
+version. For example, built mod version `2.1.1` produces extraction version `1`. 
+This will be used to increase backwords compatability with old facpacks.
+
 If no `mod-list.json` exists and `--disable-space-age` is set,
 the runner uses the bundled [mod-list.json](scripts/mod-list.json) with Space
 Age and its related expansions disabled. An existing mod list takes
