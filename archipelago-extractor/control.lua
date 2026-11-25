@@ -78,9 +78,8 @@ end
 
 function dumpResourceInfo()
     data_collection = {}
-    for _, proto in pairs(prototypes.autoplace_control) do
-        if proto.category == "resource" then
-            local r_proto = prototypes.entity[proto.name]
+    for _, r_proto in pairs(prototypes.entity) do
+        if r_proto.type == "resource" then	
             local minable = r_proto.mineable_properties
             local resource = {}
             resource["minable"] = minable.minable
@@ -108,7 +107,9 @@ function dumpResourceInfo()
                     resource["products"][product.name] = resource["products"][product.name] + amount
                 end
             end
-            data_collection[proto.name] = resource
+            if r_proto.autoplace_specification then
+                data_collection[r_proto.autoplace_specification.control or r_proto.name] = resource
+            end
         end
     end
     writeExtractorFile("resources.json", helpers.table_to_json(data_collection))
