@@ -6,6 +6,9 @@ Adds the command "/ap-get-info-dump" to create the required exports in
 Those files then belong in <AP>/worlds/factorio/data  
 You can find us at https://discord.com/invite/8Z65BR2 or https://archipelago.gg  
 
+See [EXTRACTION.md](./EXTRACTION.md) for the structure and contents of the
+generated JSON files.
+
 ## Run the extractor from a terminal
 
 The helper script starts Factorio headlessly, creates a temporary map (or loads
