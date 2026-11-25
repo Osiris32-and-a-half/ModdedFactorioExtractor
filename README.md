@@ -1,7 +1,8 @@
 # FactorioInformationExtractor
 
 Information Extractor for use with the Archipelago Cross-Game Randomizer.  
-Adds the command "/ap-get-info-dump" to create the required exports in script-output.  
+Adds the command "/ap-get-info-dump" to create the required exports in
+`script-output/Extractor`.
 Those files then belong in <AP>/worlds/factorio/data  
 You can find us at https://discord.com/invite/8Z65BR2 or https://archipelago.gg  
 
@@ -30,8 +31,8 @@ python3 scripts/run-info-dump.py \
 ```
 
 The Factorio config can be selected with `--config`. The exported JSON files
-are written to the `script-output` directory under Factorio's configured
-write-data path.
+are written to the `script-output/Extractor` directory under Factorio's
+configured write-data path.
 
 The dump includes `extractorInfo.json` with the full Factorio base version and
 an `extraction_version` taken from the patch component of the extractor mod

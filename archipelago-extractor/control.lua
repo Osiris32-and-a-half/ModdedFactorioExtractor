@@ -1,3 +1,9 @@
+local OUTPUT_DIRECTORY = "Extractor/"
+
+local function writeExtractorFile(filename, data)
+    helpers.write_file(OUTPUT_DIRECTORY .. filename, data, false)
+end
+
 function dumpTechInfo(force)
     local data_collection = {}
 
@@ -27,7 +33,7 @@ function dumpTechInfo(force)
             tech.researched = true -- enable all available recipes
         end
     end
-    helpers.write_file("techs.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("techs.json", helpers.table_to_json(data_collection))
     game.print("Exported Tech Data")
 end
 
@@ -66,7 +72,7 @@ function dumpRecipeInfo(force)
             data_collection[recipe_name] = recipe_data
         end
     end
-    helpers.write_file("recipes.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("recipes.json", helpers.table_to_json(data_collection))
     game.print("Exported Recipe Data")
 end
 
@@ -105,7 +111,7 @@ function dumpResourceInfo()
             data_collection[proto.name] = resource
         end
     end
-    helpers.write_file("resources.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("resources.json", helpers.table_to_json(data_collection))
     game.print("Exported Minable Resource Data")
 end
 
@@ -135,8 +141,8 @@ function dumpMachineInfo()
         ::machineContinue::
     end
 
-    helpers.write_file("generators.json", helpers.table_to_json(generators), false)
-    helpers.write_file("machines.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("generators.json", helpers.table_to_json(generators))
+    writeExtractorFile("machines.json", helpers.table_to_json(data_collection))
     game.print("Exported Machine Data")
 end
 
@@ -154,8 +160,8 @@ function dumpItemInfo()
         ::itemContinue::
     end
 
-    helpers.write_file("entityToItem.json", helpers.table_to_json(entity_to_item), false)
-    helpers.write_file("items.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("entityToItem.json", helpers.table_to_json(entity_to_item))
+    writeExtractorFile("items.json", helpers.table_to_json(data_collection))
     game.print("Exported Item Data")
 end
 
@@ -167,7 +173,7 @@ function dumpFluidInfo()
         ::fluidContinue::
     end
 
-    helpers.write_file("fluids.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("fluids.json", helpers.table_to_json(data_collection))
     game.print("Exported Fluid Data")
 end
 
@@ -203,8 +209,8 @@ function dumpModSettings()
         end
     end
 
-    helpers.write_file("modSettings.json", helpers.table_to_json(data_collection), false)
-    helpers.write_file("modVersions.json", helpers.table_to_json(version_collection), false)
+    writeExtractorFile("modSettings.json", helpers.table_to_json(data_collection))
+    writeExtractorFile("modVersions.json", helpers.table_to_json(version_collection))
     game.print("Exported Mod settings")
 end
 
@@ -219,7 +225,7 @@ function dumpExtractorInfo()
         ["factorio_version"] = script.active_mods["base"],
         ["extraction_version"] = tonumber(extraction_version),
     }
-    helpers.write_file("extractorInfo.json", helpers.table_to_json(data), false)
+    writeExtractorFile("extractorInfo.json", helpers.table_to_json(data))
     game.print("Exported Extractor Info")
 end
 
@@ -235,7 +241,7 @@ function dumpAutoplace()
         end
     end
     
-    helpers.write_file("autoplace.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("autoplace.json", helpers.table_to_json(data_collection))
     game.print("Exported autoplace")
 end
 
@@ -254,7 +260,7 @@ function dumpSpecialTiles()
         end
         ::tileContinue::
     end
-    helpers.write_file("specialTiles.json", helpers.table_to_json(data_collection), false)
+    writeExtractorFile("specialTiles.json", helpers.table_to_json(data_collection))
     game.print("Exported specialTiles")
 end
 
